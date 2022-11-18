@@ -9,7 +9,7 @@ Its pretty simple. you create a datebase, then feed in the variables you want to
 #### creating a DB
 
 windows:
-```ESQL -c```
+```esql -c```
 
 *NIX systems:
-```python3 -m ESQL -c```
+```python3 -m esql -c```
