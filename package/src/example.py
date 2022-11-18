@@ -27,7 +27,6 @@ class Guild(Base):
     lc = Column('lc', Integer)
 
     def __init__(self, id):
-        print(f'2{id}')
         self.id = id
 
     def add_verifiers(self, *verifiers):

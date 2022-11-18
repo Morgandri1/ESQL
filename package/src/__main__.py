@@ -142,4 +142,3 @@ def remove_guild(guild_id):
 
 if argv[0] == "-c" or "--create":
     ESQL()
-
