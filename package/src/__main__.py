@@ -24,8 +24,7 @@ class Guild(Base):
     __tablename__ = "guild"
 
     id = Column('id', Integer, primary_key=True)
-
-    """
+"""
 
         template_end = f"""
 engine = create_engine('sqlite:///database.db')
@@ -70,35 +69,28 @@ def remove_guild(guild_id):
             f.write(template_start)
             f.close
         with open(f"{file}.py", "a+") as f:
-            for string in strings:
-                input(string)
-                default = string["default"]
-                f.write(f"        {string} = Column('{string}', String, default={default})\n")
-            for integer in integers:
-                default = integer["data"]["default"]
-                f.write(f"        {integer} = Column('{integer}', Integer, default={default})\n")
-            for float in floats:
-                default = float["data"]["default"]
-                f.write(f"        {float} = Column('{float}', Float, default={default})\n")
-            for boolean in booleans:
-                default = boolean["data"]["default"]
-                f.write(f"        {boolean} = Column('{boolean}', Boolean, default={default})\n")
+            for s in strings:
+                default = strings[s]["default"]
+                f.write(f"    {s} = Column('{s}', String, default={str(default)})\n")
+            for i in integers:
+                default = integers[i]["default"]
+                f.write(f"    {i} = Column('{i}', Integer, default={int(default)})\n")
+            for fl in floats:
+                default = floats[fl]["default"]
+                f.write(f"    {fl} = Column('{fl}', Float, default={float(default)})\n")
+            for b in booleans:
+                default = booleans[b]["default"]
+                f.write(f"    {b} = Column('{b}', Boolean, default={bool(default)})\n")
+            f.write("\n\n"+template_end)
             f.close
     def start(self):
         banner("ESQL", blue)
         print("Welcome to ESQL, the easy SQL database builder!")
-        print(
-            """
-    1. add dataset by value (ex: 123, "table")
-            """
-        )
-        option = input("what would you like to do? ")
-        if option == "1":
-            self.table = input("what would you like to name the table? ")
-            self.add_dataset_by_value()
-        else:
-            print("invalid option")
-            self.start()
+        self.table = input("what would you like to name the database file? (ex. db.py) ")
+        if self.table.endswith(".py"):
+            self.table = self.table[:-3]
+        print(self.table)
+        self.add_dataset_by_value()
 
     def add_dataset_by_value(self):
         print("created new dataset default")
@@ -115,18 +107,18 @@ def remove_guild(guild_id):
         option = input("what would you like to do? ")
         if option == "1":
             name = input("what would you like to name the string? ")
-            value = input("what would you like to set the defualt value to? ")
-            self.strings[name] = {"defualt": value}
+            value = input("what would you like to set the default value to? ")
+            self.strings[name] = {"default": value}
             self.add_dataset_by_value()
         elif option == "2":
             name = input("what would you like to name the integer? ")
-            value = input("what would you like to set the defualt value to? ")
-            self.integers[name] = {"defualt": value}
+            value = input("what would you like to set the default value to? ")
+            self.integers[name] = {"default": value}
             self.add_dataset_by_value()
         elif option == "3":
             name = input("what would you like to name the float? ")
-            value = input("what would you like to set the defualt value to? ")
-            self.floats[name] = {"defualt": value}
+            value = input("what would you like to set the default value to? ")
+            self.floats[name] = {"default": value}
             self.add_dataset_by_value()
         elif option == "4":
             name = input("what would you like to name the boolean? ")
@@ -138,9 +130,10 @@ def remove_guild(guild_id):
                 value = True
             if value == "False":
                 value = False
-            self.booleans[name] = {"defualt": value}
+            self.booleans[name] = {"default": value}
             self.add_dataset_by_value()
         elif option == "5":
+            return print("We're sorry, but lists are not supported yet. please check back next feature update!")
             name = input("what would you like to name the list? ")
             self.lists.append(name)
             self.add_dataset_by_value()
@@ -149,3 +142,4 @@ def remove_guild(guild_id):
 
 if argv[0] == "-c" or "--create":
     ESQL()
+
