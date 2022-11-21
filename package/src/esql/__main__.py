@@ -14,7 +14,7 @@ class ESQL:
 
     def write(self, file, strings, integers, floats, booleans, lists):
         template_start = f"""import sqlalchemy.exc as exc
-from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -71,7 +71,7 @@ def remove_guild(guild_id):
         with open(f"{file}.py", "a+") as f:
             for s in strings:
                 default = strings[s]["default"]
-                f.write(f"    {s} = Column('{s}', String, default={str(default)})\n")
+                f.write(f"    {s} = Column('{s}', String, default='{str(default)}')\n")
             for i in integers:
                 default = integers[i]["default"]
                 f.write(f"    {i} = Column('{i}', Integer, default={int(default)})\n")
@@ -139,6 +139,3 @@ def remove_guild(guild_id):
             self.add_dataset_by_value()
         elif option == "6":
             self.write(self.table, self.strings, self.integers, self.floats, self.booleans, self.lists)
-
-if argv[0] == "-c" or "--create":
-    ESQL()
