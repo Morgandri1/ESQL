@@ -44,6 +44,9 @@ class ESQL:
     lists = []
 
     def write(self, file, strings, integers, floats, booleans, lists):
+        with open("implimentation_README.txt") as README:
+            README.write(readme)
+        README.close()
         template_start = f"""import sqlalchemy.exc as exc
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
