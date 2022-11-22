@@ -1,6 +1,37 @@
 from sys import argv
 from CopperUI import *
 
+readme = """
+Hello! Thanks for using ESQL.
+
+you may be looking for implimentation help, so here it is!
+
+move the generated file to your project directory, and import it.
+
+then, you can get your guild's table by using the get_guild(*guild_id*) function. (guild ID needs to be a string.)
+
+usually it's gonna look like this:
+
+    from esql import *
+
+    db = get_guild(str(guild.id))
+
+here's how to get the rest of your info:
+
+    db.<variable name> # this will get you any simple variable. (int, str, bool, float.)
+    db.<list name> # this will get you any list. lists are methods, so remember your parentheses! it returns as a python list, so you can iterate over it to your heart's content.
+
+creating a new guild is easy:
+
+    create_guild(str(guild.id))
+    # or, you can load the guld if there's a chance the table already exists. if it doesnt, it'll create it automatically.
+    db = get_guild(str(guild.id))
+
+each list has an add method and a remove method. they can be called the same way as your list. (db.add_<list_name>(item), db.remove_<list_name>(item))
+
+
+"""
+
 class ESQL:
     def __init__(self):
         self.start()
@@ -81,9 +112,53 @@ def remove_guild(guild_id):
             for b in booleans:
                 default = booleans[b]["default"]
                 f.write(f"    {b} = Column('{b}', Boolean, default={bool(default)})\n")
+            for l in lists:
+                f.write(f"""
+    def add_{l}(self, *items):
+        for item in items:
+            if len(db.query(Guild{l}).filter(Guild{l}.{l}_id == item).filter(Guild{l}.guild_id == self.id).all()) > 0:
+                continue
+
+            i = Guild{l}()
+            i.{l}_id = item
+            i.guild_id = self.id
+
+            db.add(i)
+
+            update()
+
+    def remove_{l}(self, *items):
+        for item in items:
+            try:
+                i = db.query(Guild{l}).filter(Guild{l}.item == item).one()
+
+                db.remove(i)
+
+                update()
+            except exc.NoResultFound as e:
+                return "No result"
+
+    def {l}(self):
+        {l} = []
+        for v in db.query(Guild{l}).filter(Guild{l}.guild_id == self.id).all():
+            {l}.append(v.{l}_id)
+        return {l}
+                """)
+            for l in lists:
+                f.write(f"""
+class Guild{l}(Base):
+    __tablename__ = "guild_{l}"
+
+    id = Column('id', Integer, primary_key=True)
+    guild_id = Column('guild_id', Integer)
+    {l}_id = Column('{l}_id', Integer)
+                """)
             f.write("\n\n"+template_end)
             f.close
+        with open("readme.txt", "w") as f:
+            f.write(readme)
     def start(self):
+        clearscreen()
         banner("ESQL", blue)
         print("Welcome to ESQL, the easy SQL database builder!")
         self.table = input("what would you like to name the database file? (ex. db.py) ")
@@ -93,7 +168,8 @@ def remove_guild(guild_id):
         self.add_dataset_by_value()
 
     def add_dataset_by_value(self):
-        print("created new dataset default")
+        clearscreen()
+        banner("ESQL", blue)
         print(
             """
     1. add string
@@ -133,9 +209,16 @@ def remove_guild(guild_id):
             self.booleans[name] = {"default": value}
             self.add_dataset_by_value()
         elif option == "5":
-            return print("We're sorry, but lists are not supported yet. please check back next feature update!")
             name = input("what would you like to name the list? ")
             self.lists.append(name)
             self.add_dataset_by_value()
         elif option == "6":
             self.write(self.table, self.strings, self.integers, self.floats, self.booleans, self.lists)
+
+try:
+    if sys.argv[1] == "-c":
+        ESQL()
+    else:
+        print("invalid argument")
+except IndexError:
+    ESQL()
