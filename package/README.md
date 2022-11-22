@@ -8,6 +8,11 @@ Its pretty simple. you create a datebase, then feed in the variables you want to
 
 the tool automatically generates a README specific to how to implement your DB system.
 
+
+### What's going on under the hood?
+
+We populate a file using your given variables, then when you finish up, your file is created in your CWD.
+
 #### creating a DB
 
 windows:
