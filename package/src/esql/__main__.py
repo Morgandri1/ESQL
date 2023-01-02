@@ -59,6 +59,12 @@ class Guild(Base):
 
     id = Column('id', Integer, primary_key=True)
 """
+        
+        init_statement = """
+    def __init__(self, id):
+        print(f'2{id}')
+        self.id = id        
+"""
 
         template_end = f"""
 engine = create_engine('sqlite:///database.db')
@@ -115,6 +121,7 @@ def remove_guild(guild_id):
             for b in booleans:
                 default = booleans[b]["default"]
                 f.write(f"    {b} = Column('{b}', Boolean, default={bool(default)})\n")
+            f.write(init_statement)
             for l in lists:
                 f.write(f"""
     def add_{l}(self, *items):
